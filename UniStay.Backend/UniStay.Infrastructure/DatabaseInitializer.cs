@@ -1,0 +1,33 @@
+﻿using UniStay.Infrastructure.Database;
+using UniStay.Infrastructure.Database.Seeders;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace UniStay.Infrastructure;
+
+public static class DatabaseInitializer
+{
+    /// <summary>
+    /// Centralized migration and seeding.
+    /// </summary>
+    public static async Task InitializeDatabaseAsync(this IServiceProvider services, IHostEnvironment env)
+    {
+        await using var scope = services.CreateAsyncScope();
+        var ctx = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+
+        if (env.IsEnvironment("IntegrationTests") || env.IsEnvironment("Testing"))
+        {
+            await ctx.Database.EnsureCreatedAsync();
+            await DynamicDataSeeder.SeedAsync(ctx);
+            return;
+        }
+
+        // SQL Server or similar
+        await ctx.Database.MigrateAsync();
+
+        if (env.IsDevelopment())
+        {
+            await DynamicDataSeeder.SeedAsync(ctx);
+        }
+    }
+}

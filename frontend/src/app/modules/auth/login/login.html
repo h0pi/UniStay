@@ -1,0 +1,33 @@
+<div class="login-container">
+  <div class="login-box">
+    <h2>Prijava</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <input
+          type="email"
+          placeholder="Email"
+          formControlName="email"
+        />
+        <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Unesite validan email.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="password"
+          placeholder="Lozinka"
+          formControlName="password"
+        />
+        <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Lozinka je obavezna.
+        </small>
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid">Prijavi se</button>
+
+      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    </form>
+  </div>
+</div>
