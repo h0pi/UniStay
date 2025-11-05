@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UniStay.Infrastructure.Database.Configurations.Catelog
+{
+    public class RoomConfiguration : IEntityTypeConfiguration<Room>
+    {
+        public void Configure(EntityTypeBuilder<Room> builder)
+        {
+            builder.ToTable("Rooms");
+
+            builder.HasKey(r => r.Id);
+
+            builder.Property(r => r.RoomNumber)
+                   .IsRequired()
+                   .HasMaxLength(10);
+
+            builder.Property(r => r.Floor).IsRequired();
+            builder.Property(r => r.MaxOccupancy).IsRequired();
+
+            builder.HasMany(r => r.Beds)
+                   .WithOne(b => b.Room)
+                   .HasForeignKey(b => b.RoomId)
+                   .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+}

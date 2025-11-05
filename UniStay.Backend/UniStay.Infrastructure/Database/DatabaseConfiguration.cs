@@ -1,7 +1,7 @@
 ﻿using UniStay.Domain.Common;
 using UniStay.Infrastructure.Database.Seeders;
 using System.Linq.Expressions;
-using DomApplication = UniStay.Domain.Entities.Catalog.Application;
+
 
 namespace UniStay.Infrastructure.Database;
 
@@ -34,98 +34,14 @@ public partial class DatabaseContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Apply all IEntityTypeConfiguration<T> configurations automatically
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DatabaseContext).Assembly);
+
         base.OnModelCreating(modelBuilder);
 
+        // Global filters and static data
         ApplyGlobalFielters(modelBuilder);
-
-        StaticDataSeeder.Seed(modelBuilder); // static data
-
-        modelBuilder.Entity<DomApplication>()
-       .HasOne(a => a.Student)
-       .WithMany(u => u.Applications)
-       .HasForeignKey(a => a.StudentId)
-       .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<DomApplication>()
-            .HasOne(a => a.DecisionByUser)
-            .WithMany(u => u.DecisionsMade)
-            .HasForeignKey(a => a.DecisionByUserId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<BedAssignment>()
-           .HasOne(b => b.Bed)
-           .WithMany()
-           .HasForeignKey(b => b.BedId)
-           .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<BedAssignment>()
-            .HasOne(b => b.Student)
-            .WithMany()
-            .HasForeignKey(b => b.StudentId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        // ----------------------------
-        // HallReservation konfiguracija
-        // ----------------------------
-        modelBuilder.Entity<HallReservation>()
-            .HasOne(hr => hr.Hall)
-            .WithMany()
-            .HasForeignKey(hr => hr.HallId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<HallReservation>()
-            .HasOne(hr => hr.Student)
-            .WithMany()
-            .HasForeignKey(hr => hr.StudentId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        // ----------------------------
-        // EquipmentAssignment konfiguracija
-        // ----------------------------
-        modelBuilder.Entity<EquipmentAssignment>()
-            .HasOne(ea => ea.Equipment)
-            .WithMany()
-            .HasForeignKey(ea => ea.EquipmentId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<EquipmentAssignment>()
-            .HasOne(ea => ea.Room)
-            .WithMany()
-            .HasForeignKey(ea => ea.RoomId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<EquipmentAssignment>()
-            .HasOne(ea => ea.Student)
-            .WithMany()
-            .HasForeignKey(ea => ea.StudentId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Fault>()
-            .HasOne(f => f.ReportedByUser)
-            .WithMany(u => u.FaultsReported) // ova kolekcija iz User entiteta
-            .HasForeignKey(f => f.ReportedByUserId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Message>()
-            .HasOne(m => m.ReceiverUser)
-            .WithMany(u => u.MessagesReceived)
-            .HasForeignKey(m => m.ReceiverUserId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Message>()
-            .HasOne(m => m.SenderUser)
-            .WithMany(u => u.MessagesSent)
-            .HasForeignKey(m => m.SenderUserId)
-            .OnDelete(DeleteBehavior.Restrict);
-        // ----------------------------
-        // Hall, Room, Equipment konfiguracije
-        // ----------------------------
-        
-
-        modelBuilder.Entity<Room>().Property(r => r.RoomNumber).HasMaxLength(10);
-        modelBuilder.Entity<Bed>().Property(b => b.BedNumber).IsRequired();
-        modelBuilder.Entity<Equipment>().Property(e => e.Name).HasMaxLength(100);
-        modelBuilder.Entity<Hall>().Property(h => h.Name).HasMaxLength(50);
+        StaticDataSeeder.Seed(modelBuilder);
     }
 
     private void ApplyGlobalFielters(ModelBuilder modelBuilder)

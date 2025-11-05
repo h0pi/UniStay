@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UniStay.Infrastructure.Database;
 
@@ -11,9 +12,11 @@ using UniStay.Infrastructure.Database;
 namespace UniStay.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251105115157_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,8 +57,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VisibleTo")
                         .IsRequired()
@@ -65,7 +67,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.ToTable("Announcements", (string)null);
+                    b.ToTable("Announcements");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Application", b =>
@@ -75,9 +77,6 @@ namespace UniStay.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ApplicationStatusId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("AppliedAt")
                         .HasColumnType("datetime2");
@@ -108,9 +107,6 @@ namespace UniStay.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RoomId")
-                        .HasColumnType("int");
-
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
@@ -119,19 +115,15 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationStatusId");
-
                     b.HasIndex("AssignedRoomId");
 
                     b.HasIndex("DecisionByUserId");
-
-                    b.HasIndex("RoomId");
 
                     b.HasIndex("StatusId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Applications", (string)null);
+                    b.ToTable("Applications");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.ApplicationStatus", b =>
@@ -187,7 +179,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Beds", (string)null);
+                    b.ToTable("Beds");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.BedAssignment", b =>
@@ -201,6 +193,9 @@ namespace UniStay.Infrastructure.Migrations
                     b.Property<int>("BedId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BedId1")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -208,9 +203,7 @@ namespace UniStay.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
@@ -221,13 +214,20 @@ namespace UniStay.Infrastructure.Migrations
                     b.Property<DateTime?>("ToDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BedId");
 
+                    b.HasIndex("BedId1");
+
                     b.HasIndex("StudentId");
 
-                    b.ToTable("BedAssignments", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BedAssignments");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Equipment", b =>
@@ -272,7 +272,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Equipment", (string)null);
+                    b.ToTable("Equipment");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.EquipmentAssignment", b =>
@@ -292,6 +292,9 @@ namespace UniStay.Infrastructure.Migrations
                     b.Property<int>("EquipmentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EquipmentId1")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -307,18 +310,30 @@ namespace UniStay.Infrastructure.Migrations
                     b.Property<int?>("RoomId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RoomId1")
+                        .HasColumnType("int");
+
                     b.Property<int?>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EquipmentId");
 
+                    b.HasIndex("EquipmentId1");
+
                     b.HasIndex("RoomId");
+
+                    b.HasIndex("RoomId1");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("EquipmentAssignments", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EquipmentAssignments");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Fault", b =>
@@ -382,7 +397,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Faults", (string)null);
+                    b.ToTable("Faults");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Hall", b =>
@@ -406,17 +421,14 @@ namespace UniStay.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
@@ -428,7 +440,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Halls", (string)null);
+                    b.ToTable("Halls");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.HallReservation", b =>
@@ -448,10 +460,11 @@ namespace UniStay.Infrastructure.Migrations
                     b.Property<int>("HallId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("HallId1")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
@@ -469,13 +482,20 @@ namespace UniStay.Infrastructure.Migrations
                     b.Property<DateTime>("ToDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("HallId");
 
+                    b.HasIndex("HallId1");
+
                     b.HasIndex("StudentId");
 
-                    b.ToTable("HallReservations", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("HallReservations");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Invoice", b =>
@@ -511,16 +531,11 @@ namespace UniStay.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Invoices", (string)null);
+                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Message", b =>
@@ -535,14 +550,10 @@ namespace UniStay.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsRead")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("MessageText")
                         .IsRequired()
@@ -570,7 +581,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasIndex("SenderUserId");
 
-                    b.ToTable("Message", (string)null);
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Payment", b =>
@@ -621,7 +632,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.ProductCategoryEntity", b =>
@@ -646,12 +657,11 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductCategories", (string)null);
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.ProductEntity", b =>
@@ -669,8 +679,7 @@ namespace UniStay.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -683,8 +692,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -697,7 +705,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Room", b =>
@@ -734,7 +742,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Rooms", (string)null);
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Identity.RefreshTokenEntity", b =>
@@ -752,16 +760,13 @@ namespace UniStay.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Fingerprint")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsRevoked")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
@@ -771,17 +776,16 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.Property<string>("TokenHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "TokenHash")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Identity.Role", b =>
@@ -807,7 +811,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Identity.User", b =>
@@ -864,7 +868,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Announcement", b =>
@@ -880,26 +884,17 @@ namespace UniStay.Infrastructure.Migrations
 
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Application", b =>
                 {
-                    b.HasOne("UniStay.Domain.Entities.Catalog.ApplicationStatus", null)
-                        .WithMany("Applications")
-                        .HasForeignKey("ApplicationStatusId");
-
                     b.HasOne("UniStay.Domain.Entities.Catalog.Room", "AssignedRoom")
-                        .WithMany()
-                        .HasForeignKey("AssignedRoomId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .WithMany("ApplicationsAssigned")
+                        .HasForeignKey("AssignedRoomId");
 
                     b.HasOne("UniStay.Domain.Entities.Identity.User", "DecisionByUser")
                         .WithMany("DecisionsMade")
                         .HasForeignKey("DecisionByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("UniStay.Domain.Entities.Catalog.Room", null)
-                        .WithMany("ApplicationsAssigned")
-                        .HasForeignKey("RoomId");
-
                     b.HasOne("UniStay.Domain.Entities.Catalog.ApplicationStatus", "Status")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -933,16 +928,24 @@ namespace UniStay.Infrastructure.Migrations
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.BedAssignment", b =>
                 {
                     b.HasOne("UniStay.Domain.Entities.Catalog.Bed", "Bed")
-                        .WithMany("BedAssignments")
+                        .WithMany()
                         .HasForeignKey("BedId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("UniStay.Domain.Entities.Identity.User", "Student")
+                    b.HasOne("UniStay.Domain.Entities.Catalog.Bed", null)
                         .WithMany("BedAssignments")
+                        .HasForeignKey("BedId1");
+
+                    b.HasOne("UniStay.Domain.Entities.Identity.User", "Student")
+                        .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("UniStay.Domain.Entities.Identity.User", null)
+                        .WithMany("BedAssignments")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Bed");
 
@@ -952,20 +955,32 @@ namespace UniStay.Infrastructure.Migrations
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.EquipmentAssignment", b =>
                 {
                     b.HasOne("UniStay.Domain.Entities.Catalog.Equipment", "Equipment")
-                        .WithMany("EquipmentAssignments")
+                        .WithMany()
                         .HasForeignKey("EquipmentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("UniStay.Domain.Entities.Catalog.Room", "Room")
+                    b.HasOne("UniStay.Domain.Entities.Catalog.Equipment", null)
                         .WithMany("EquipmentAssignments")
+                        .HasForeignKey("EquipmentId1");
+
+                    b.HasOne("UniStay.Domain.Entities.Catalog.Room", "Room")
+                        .WithMany()
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("UniStay.Domain.Entities.Identity.User", "Student")
+                    b.HasOne("UniStay.Domain.Entities.Catalog.Room", null)
                         .WithMany("EquipmentAssignments")
+                        .HasForeignKey("RoomId1");
+
+                    b.HasOne("UniStay.Domain.Entities.Identity.User", "Student")
+                        .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("UniStay.Domain.Entities.Identity.User", null)
+                        .WithMany("EquipmentAssignments")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Equipment");
 
@@ -988,8 +1003,7 @@ namespace UniStay.Infrastructure.Migrations
 
                     b.HasOne("UniStay.Domain.Entities.Identity.User", "ResolvedByUser")
                         .WithMany("FaultsResolved")
-                        .HasForeignKey("ResolvedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("ResolvedByUserId");
 
                     b.HasOne("UniStay.Domain.Entities.Catalog.Room", "Room")
                         .WithMany("Faults")
@@ -1007,16 +1021,24 @@ namespace UniStay.Infrastructure.Migrations
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.HallReservation", b =>
                 {
                     b.HasOne("UniStay.Domain.Entities.Catalog.Hall", "Hall")
-                        .WithMany("HallReservations")
+                        .WithMany()
                         .HasForeignKey("HallId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("UniStay.Domain.Entities.Identity.User", "Student")
+                    b.HasOne("UniStay.Domain.Entities.Catalog.Hall", null)
                         .WithMany("HallReservations")
+                        .HasForeignKey("HallId1");
+
+                    b.HasOne("UniStay.Domain.Entities.Identity.User", "Student")
+                        .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("UniStay.Domain.Entities.Identity.User", null)
+                        .WithMany("HallReservations")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Hall");
 
@@ -1026,14 +1048,10 @@ namespace UniStay.Infrastructure.Migrations
             modelBuilder.Entity("UniStay.Domain.Entities.Catalog.Invoice", b =>
                 {
                     b.HasOne("UniStay.Domain.Entities.Identity.User", "Student")
-                        .WithMany()
+                        .WithMany("Invoices")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("UniStay.Domain.Entities.Identity.User", null)
-                        .WithMany("Invoices")
-                        .HasForeignKey("UserId");
 
                     b.Navigation("Student");
                 });
@@ -1061,13 +1079,12 @@ namespace UniStay.Infrastructure.Migrations
                 {
                     b.HasOne("UniStay.Domain.Entities.Catalog.Invoice", "Invoice")
                         .WithMany("Payments")
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("InvoiceId");
 
                     b.HasOne("UniStay.Domain.Entities.Identity.User", "Student")
                         .WithMany("Payments")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Invoice");
@@ -1080,7 +1097,7 @@ namespace UniStay.Infrastructure.Migrations
                     b.HasOne("UniStay.Domain.Entities.Catalog.ProductCategoryEntity", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");

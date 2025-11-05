@@ -20,4 +20,8 @@
     <ProjectReference Include="..\UniStay.Shared\UniStay.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\Catalog\User\Commands\Status\" />
+  </ItemGroup>
+
 </Project>
