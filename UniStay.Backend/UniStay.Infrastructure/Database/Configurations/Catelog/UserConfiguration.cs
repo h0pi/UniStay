@@ -24,6 +24,8 @@ namespace UniStay.Infrastructure.Database.Configurations.Catelog
             builder.Property(u => u.Username).IsRequired();
             builder.Property(u => u.PasswordHash).IsRequired();
 
+            builder.HasIndex(u => u.Email).IsUnique();
+
             builder.HasOne(u => u.Role)
                    .WithMany(r => r.Users)
                    .HasForeignKey(u => u.RoleId)

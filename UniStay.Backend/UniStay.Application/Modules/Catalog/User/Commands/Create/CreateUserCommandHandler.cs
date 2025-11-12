@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BCrypt.Net;
 using UniStay.Application.Modules.Catalog.User.Commands.Create;
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
@@ -14,16 +15,24 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
     public CreateUserCommandHandler(IAppDbContext context/*, IPasswordHasher passwordHasher*/)
     {
         _context = context;
-       // _passwordHasher = passwordHasher;
+        //_passwordHasher = passwordHasher;
     }
 
     public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
+
+        var emailExists = await _context.Users
+                .AnyAsync(x => x.Email == request.Email, cancellationToken);
+
+        if (emailExists)
+            throw new InvalidOperationException($"User with email '{request.Email}' already exists.");
+
+
         var user = new User
         {
             Username = request.Username,
             Email = request.Email,
-            PasswordHash = request.Password,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             RoleId = request.UserRoleId
         };
 

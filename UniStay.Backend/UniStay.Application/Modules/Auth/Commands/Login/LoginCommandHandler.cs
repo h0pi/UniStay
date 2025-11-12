@@ -2,8 +2,7 @@
 
 public sealed class LoginCommandHandler(
     IAppDbContext ctx,
-    IJwtTokenService jwt,
-    IPasswordHasher<User> hasher)
+    IJwtTokenService jwt)
     : IRequestHandler<LoginCommand, LoginCommandDto>
 {
     public async Task<LoginCommandDto> Handle(LoginCommand request, CancellationToken ct)
@@ -14,9 +13,14 @@ public sealed class LoginCommandHandler(
             .FirstOrDefaultAsync(x => x.Email.ToLower() == email && /*x.IsEnabled &&*/ !x.IsDeleted, ct)
             ?? throw new UniStayNotFoundException("Korisnik nije pronađen ili je onemogućen.");
 
-        var verify = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
-        if (verify == PasswordVerificationResult.Failed)
+        //var verify = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+        //if (verify == PasswordVerificationResult.Failed)
+        //    throw new UniStayConflictException("Pogrešni kredencijali.");
+
+        bool verify = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+        if (!verify)
             throw new UniStayConflictException("Pogrešni kredencijali.");
+
 
         var tokens = jwt.IssueTokens(user);
 

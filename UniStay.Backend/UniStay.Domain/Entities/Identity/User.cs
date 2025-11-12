@@ -32,4 +32,11 @@ public sealed class User : BaseEntity
     public ICollection<DomApplication> DecisionsMade { get; set; } = new List<DomApplication>();
     public ICollection<Message> MessagesSent { get; set; } = new List<Message>();
     public ICollection<Message> MessagesReceived { get; set; } = new List<Message>();
+
+    public static class Constraints
+    {
+        public const int UsernameMaxLength = 50;
+        public const int PasswordMinLength = 6;
+    }
+
 }

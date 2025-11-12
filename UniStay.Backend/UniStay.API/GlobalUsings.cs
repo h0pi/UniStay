@@ -6,5 +6,6 @@ global using MediatR;
 global using FluentValidation;
 global using Microsoft.AspNetCore.Mvc;
 global using UniStay.Application.Common;
+global using UniStay.Domain.Entities;
 
 global using Microsoft.AspNetCore.Authorization;
